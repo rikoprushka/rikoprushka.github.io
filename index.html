@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rainbow Holographic Card with Matching Text Box Width</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #121212;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        .card-container {
+            position: relative;
+            width: 360px;
+            height: 540px;
+            perspective: 1000px;
+            margin: 2rem auto;
+        }
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.1s ease;
+            transform-style: preserve-3d;
+        }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background-size: cover;
+            background-position: center;
+            background-image: url('img/RikoPrushka.png');
+        }
+        .holo-effect {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 0, 0, 0.3),
+                rgba(255, 165, 0, 0.3),
+                rgba(255, 255, 0, 0.3),
+                rgba(0, 255, 0, 0.3),
+                rgba(0, 0, 255, 0.3),
+                rgba(75, 0, 130, 0.3),
+                rgba(238, 130, 238, 0.3)
+            );
+            background-size: 400% 400%;
+            mix-blend-mode: color-dodge;
+            opacity: 0;
+            transition: opacity 0.3s ease, background-position 0.1s ease;
+            filter: brightness(1.05) contrast(1.05);
+        }
+        .glow {
+            position: absolute;
+            inset: -50%;
+            background: radial-gradient(
+                circle at center,
+                rgba(255, 255, 255, 0.5) 0%,
+                rgba(255, 255, 255, 0) 60%
+            );
+            opacity: 0;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+            transition: transform 0.1s ease, opacity 0.3s ease;
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .card-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div id="card-container" class="card-container">
+        <div id="card" class="card">
+            <div class="card-face">
+                <div id="holo-layer" class="holo-effect"></div>
+                <div id="glow" class="glow"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="text-box" class="glassmorphism p-8 rounded-[2rem] text-white/90 w-[50rem] mb-4">
+        <h2 class="text-xl font-bold mb-2 text-center">Riko Prushka</h2>
+        <p class="text-l text-center">I got into game translation because I wanted to enjoy gaming in my native language.<br>Turns out, I ended up spending more time modding and translating than actually playing games.<br>But hey, it's surprisingly entertaining in its own unique way!</p>
+    </div>
+
+    <script>
+        const container = document.getElementById('card-container');
+        const card = document.getElementById('card');
+        const holoLayer = document.getElementById('holo-layer');
+        const glow = document.getElementById('glow');
+
+        let isMouseOver = false;
+        let rafId = null;
+
+        function lerp(start, end, t) {
+            return start * (1 - t) + end * t;
+        }
+
+        let currentX = 0.5;
+        let currentY = 0.5;
+        let targetX = 0.5;
+        let targetY = 0.5;
+
+        function updateEffect() {
+            if (!isMouseOver) {
+                cancelAnimationFrame(rafId);
+                return;
+            }
+
+            currentX = lerp(currentX, targetX, 0.2);
+            currentY = lerp(currentY, targetY, 0.2);
+
+            const rotateY = (currentX - 0.5) * 30;
+            const rotateX = (currentY - 0.5) * -30;
+
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            
+            holoLayer.style.opacity = 0.5;
+            holoLayer.style.backgroundPosition = `${currentX * 100}% ${currentY * 100}%`;
+
+            glow.style.transform = `translate(${currentX * 100}%, ${currentY * 100}%)`;
+            glow.style.opacity = 0.5;
+
+            rafId = requestAnimationFrame(updateEffect);
+        }
+
+        function handleMouseMove(e) {
+            const rect = container.getBoundingClientRect();
+            targetX = (e.clientX - rect.left) / rect.width;
+            targetY = (e.clientY - rect.top) / rect.height;
+
+            if (!isMouseOver) {
+                isMouseOver = true;
+                updateEffect();
+            }
+        }
+
+        function resetEffect() {
+            isMouseOver = false;
+            card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            holoLayer.style.opacity = 0;
+            glow.style.opacity = 0;
+        }
+
+        container.addEventListener('mousemove', handleMouseMove);
+        container.addEventListener('mouseleave', resetEffect);
+        container.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            handleMouseMove(touch);
+        });
+        container.addEventListener('touchend', resetEffect);
+    </script>
+</body>
+</html>
