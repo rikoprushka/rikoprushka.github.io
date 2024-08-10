@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rainbow Holographic Card with Matching Text Box Width</title>
+    <title>Riko Prushka</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -15,12 +15,14 @@
             min-height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         .card-container {
             position: relative;
-            width: 360px;
-            height: 540px;
+            width: 90vw;
+            max-width: 360px;
+            height: 135vw;
+            max-height: 540px;
             perspective: 1000px;
             margin: 2rem auto;
         }
@@ -97,9 +99,9 @@
         </div>
     </div>
 
-    <div id="text-box" class="glassmorphism p-8 rounded-[2rem] text-white/90 w-[50rem] mb-4">
+    <div id="text-box" class="glassmorphism p-4 sm:p-8 rounded-[2rem] text-white/90 w-full max-w-[50rem] mb-4">
         <h2 class="text-xl font-bold mb-2 text-center">Riko Prushka</h2>
-        <p class="text-l text-center">I got into game translation because I wanted to enjoy gaming in my native language.<br>Turns out, I ended up spending more time modding and translating than actually playing games.<br>But hey, it's surprisingly entertaining in its own unique way!</p>
+        <p class="text-sm sm:text-base text-center">I got into game translation because I wanted to enjoy gaming in my native language.<br class="hidden sm:inline">Turns out, I ended up spending more time modding and translating than actually playing games.<br class="hidden sm:inline">But hey, it's surprisingly entertaining in its own unique way!</p>
     </div>
 
     <script>
